@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANDREW_SYSTEM v1.3.7</title>
-    <link rel="stylesheet" href="style.css">
-    <title>Andrusha_wav Twitch Terminal</title>
+    <title>ANDRUSHA_SYSTEM v1.3.7</title>
+    <link rel="stylesheet" href="css/style.css">
     <style>
         body {
             background-color: black;
-            color: #00FF00; /* Зелёный текст */
+            color: #00FF00;
             font-family: monospace;
             margin: 0;
             padding: 10px;
             overflow: hidden;
         }
         #terminal {
-            white-space: pre-wrap; /* Перенос строк */
+            white-space: pre;
             height: 100vh;
             overflow: hidden;
-            word-break: break-all; /* Чтобы длинные строки не вылезали */
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/tmi.js@1.8.5/dist/tmi.min.js"></script>
 </head>
 <body>
     <div class="terminal">
@@ -35,14 +34,14 @@
 ( (__  )  (  )___/ )(__  )___/ \  /  )__) 
  \___)(_/\_)(__)  (____)(__)    \/  (____)
                 </pre>
-                <p>ANDREW_SYSTEM v1.3.7 - BOOTING...</p>
+                <p>ANDRUSHA_SYSTEM v1.3.7 - BOOTING...</p>
                 <p>COPYRIGHT (C) 1993 ANDREW CORP. ALL RIGHTS RESERVED.</p>
             </div>
             <div class="output" id="terminalOutput">
                 <!-- Здесь будет выводиться текст -->
             </div>
             <div class="input-line">
-                <span class="prompt">C:\ANDREW\SYSTEM></span>
+                <span class="prompt">C:\ANDRUSHA\SYSTEM></span>
                 <span class="cursor">_</span>
             </div>
         </div>
@@ -50,73 +49,65 @@
     <audio id="beepSound" src="assets/sounds/terminal-beep.mp3" preload="auto"></audio>
     <script src="script.js"></script>
     <script src="twitch.js"></script>
-     <div id="terminal">> Загрузка системы...</div> <!-- Начальное сообщение -->
-    
-    <!-- Подключаем tmi.js -->
-    <script src="https://cdn.jsdelivr.net/npm/tmi.js@1.8.5/dist/tmi.min.js"></script>
+     <div id="terminal"></div> 
     <script>
         const terminal = document.getElementById('terminal');
+        let isConnected = false;
         
-        // Функция для добавления текста
+        // Функция добавления текста с автоскроллом
         function addText(text) {
             terminal.innerHTML += text + '\n';
-            terminal.scrollTop = terminal.scrollHeight; // Автоскролл
-        }
-        
-        // 1. Проверяем, что элементы существуют
-        if (!terminal) {
-            alert('Ошибка: элемент terminal не найден!');
-        } else {
-            addText('> Проверка зависимостей...');
-        }
-        
-        // 2. Проверяем подключение tmi.js
-        if (typeof tmi === 'undefined') {
-            addText('> Ошибка: tmi.js не загружен!');
-        } else {
-            addText('> Библиотека чата загружена');
+            // Автоскролл
+            terminal.scrollTop = terminal.scrollHeight;
         }
         
         // Системные сообщения
-        const systemMessages = [
-            "System: Обнаружен майнер (убит процесс " + Math.floor(Math.random()*9000+1000) + ")",
-            "System: Донаты: " + (Math.random() > 0.5 ? "ВКЛ" : "ВЫКЛ"),
-            "System: CPU: " + Math.floor(Math.random()*100) + "%",
-            "System: Сканирование завершено"
-        ];
-        
-        // 3. Пробуем подключиться к чату
-        try {
-            const client = new tmi.Client({
-                channels: ['andrusha_wav'],
-                connection: {
-                    reconnect: true,
-                    secure: true
-                }
-            });
-            
-            client.connect().then(() => {
-                addText('> Успешное подключение к чату');
-            }).catch(e => {
-                addText('> Ошибка подключения: ' + e.message);
-            });
-            
-            client.on('message', (channel, tags, message) => {
-                addText(`${tags['display-name']}: ${message}`);
-            });
-            
-        } catch (e) {
-            addText('> Критическая ошибка: ' + e.message);
+        function addSystemMessage() {
+            const messages = [
+                "System: Обнаружен майнер в процессах (PID: " + Math.floor(Math.random()*9000+1000) + ")",
+                "System: Статус донатов: " + (Math.random() > 0.5 ? "TRUE" : "FALSE"),
+                "System: Проверка целостности... " + (Math.random() > 0.3 ? "OK" : "ERROR"),
+                "System: Загрузка CPU: " + Math.floor(Math.random()*100) + "%",
+                "System: Обновление конфигов... " + (Math.random() > 0.4 ? "Успешно" : "Ошибка"),
+                "System: Проверка сети... " + (Math.random() > 0.6 ? "Стабильная" : "Нестабильная")
+            ];
+            addText(messages[Math.floor(Math.random()*messages.length)]);
         }
         
-        // Запускаем системные сообщения каждые 5-15 сек
-        setInterval(() => {
-            addText(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
-        }, 5000 + Math.random() * 10000);
+        // Подключаемся к чату Twitch
+        const client = new tmi.Client({
+            channels: ['andrusha_wav'],
+            connection: {
+                reconnect: true,
+                secure: true
+            }
+        });
+
+        client.connect().catch(err => {
+            addText('Ошибка подключения: ' + err);
+        });
+
+        // Обработчики событий
+        client.on('connected', () => {
+            isConnected = true;
+            addText('> Подключено к чату Twitch');
+        });
+
+        client.on('message', (channel, tags, message) => {
+            addText(`${tags['display-name']}: ${message}`);
+        });
+
+        client.on('disconnected', () => {
+            isConnected = false;
+            addText('> Отключено от чата');
+        });
+
+        // Периодические системные сообщения
+        setInterval(addSystemMessage, 10000);
         
-        // Первые сообщения для проверки
-        setTimeout(() => addText('> Инициализация завершена'), 1000);
-        setTimeout(() => addText('> Ожидание данных...'), 2000);
-    </script>
+        // Первое сообщение
+        addText('> Инициализация системы...');
+        setTimeout(() => addText('> Загрузка модуля чата...'), 800);
+        setTimeout(() => addText('> Подключение к Twitch IRC...'), 1500);
 </body>
 </html>
