@@ -62,25 +62,6 @@ body {
     line-height: 1.3;
 }
 
-.input-line {
-    display: flex;
-    align-items: center;
-}
-
-.prompt {
-    margin-right: 5px;
-}
-
-.cursor {
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-/* Эффект старых CRT мониторов */
 .terminal::after {
     content: "";
     position: absolute;
@@ -95,4 +76,13 @@ body {
     );
     pointer-events: none;
     z-index: 1;
+}
+
+.terminal-content::-webkit-scrollbar {
+    display: none;
+}
+
+.terminal-content {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
