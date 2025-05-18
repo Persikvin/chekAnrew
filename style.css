@@ -314,3 +314,70 @@ body {
     0% { top: -100%; }
     100% { top: 100%; }
 }
+/* Основные стили остаются прежними */
+
+.screen-content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 40px);
+    padding: 20px;
+}
+
+.system-console {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    background: rgba(0, 20, 0, 0.1);
+    padding: 10px;
+    height: 45%;
+}
+
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    background: rgba(0, 10, 0, 0.05);
+    padding: 10px;
+    height: 45%;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(to right, 
+        transparent, 
+        rgba(0, 255, 0, 0.5), 
+        transparent);
+    margin: 5px 0;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+}
+
+.system-message {
+    color: #0f0;
+    margin: 3px 0;
+    font-size: 18px;
+    text-shadow: 0 0 3px currentColor;
+}
+
+.chat-message {
+    color: #afa;
+    margin: 3px 0;
+    font-size: 16px;
+    text-shadow: 0 0 2px currentColor;
+}
+
+/* Стили для скроллбаров */
+.system-console::-webkit-scrollbar,
+.chat-box::-webkit-scrollbar {
+    width: 5px;
+}
+
+.system-console::-webkit-scrollbar-thumb,
+.chat-box::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 0, 0.3);
+}
+
+.system-console::-webkit-scrollbar-track,
+.chat-box::-webkit-scrollbar-track {
+    background: rgba(0, 255, 0, 0.05);
+}
