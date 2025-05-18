@@ -1,41 +1,58 @@
-// Подключение к Twitch чату с использованием tmi.js
-
-function connectToTwitchChat() {
-    try {
-        const client = new tmi.Client({
-            options: { debug: false },
-            connection: {
-                reconnect: true,
-                secure: true
-            },
-            channels: ['andrusha_wav']
-        });
-
-        client.connect().catch(error => {
-            console.error('Connection error:', error);
-            addChatMessage('System', 'Ошибка подключения к чату: ' + error.message);
-        });
-
-        client.on('message', (channel, tags, message, self) => {
-            // Игнорируем собственные сообщения и сообщения без имени пользователя
-            if (self || !tags['display-name']) return;
-            
-            // Добавляем сообщение в чат
-            addChatMessage(tags['display-name'], message);
-        });
-
-        client.on('connected', (address, port) => {
-            console.log(`Connected to ${address}:${port}`);
-            addChatMessage('System', 'Чат Twitch подключен. Ожидание сообщений...');
-        });
-
-        client.on('disconnected', (reason) => {
-            console.log(`Disconnected: ${reason}`);
-            addChatMessage('System', `Отключено от чата: ${reason}`);
-        });
-
-    } catch (error) {
-        console.error('Error connecting to Twitch chat:', error);
-        addChatMessage('System', 'Ошибка подключения к Twitch чату: ' + error.message);
-    }
+// Фейковые системные статусы (оставляем без изменений)
+function updateSystemStats() {
+    // ... (прежний код)
 }
+
+// Подключение к IRC WebSocket Twitch
+function connectToTwitchChat() {
+    const channel = 'andrusha_wav';
+    const nick = 'justinfan' + Math.floor(Math.random() * 10000);
+    
+    const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+    
+    ws.onopen = () => {
+        addChatMessage('System', 'Подключаемся к Twitch IRC...');
+        ws.send(`NICK ${nick}`);
+        ws.send(`JOIN #${channel}`);
+    };
+    
+    ws.onmessage = (event) => {
+        const message = event.data.trim();
+        
+        // Ping-Pong для поддержания соединения
+        if (message.startsWith('PING')) {
+            ws.send('PONG :tmi.twitch.tv');
+            return;
+        }
+        
+        // Парсинг сообщений чата
+        const chatMsg = message.match(/^:([^!]+)!.*PRIVMSG #\w+ :(.+)$/);
+        if (chatMsg) {
+            const username = chatMsg[1];
+            const text = chatMsg[2];
+            addChatMessage(username, text);
+        }
+        
+        // Системные сообщения
+        if (message.includes('Login authentication failed')) {
+            addChatMessage('System', 'Ошибка: Анонимное подключение ограничено');
+        }
+    };
+    
+    ws.onerror = (error) => {
+        addChatMessage('System', `Ошибка соединения: ${error.message}`);
+    };
+    
+    ws.onclose = () => {
+        addChatMessage('System', 'Соединение с чатом закрыто');
+    };
+}
+
+// Инициализация
+function init() {
+    setInterval(updateSystemStats, 1000);
+    updateSystemStats();
+    connectToTwitchChat();
+}
+
+window.onload = init;
