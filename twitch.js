@@ -1,42 +1,41 @@
+// Подключение к Twitch чату с использованием tmi.js
 
-socket.onopen = function() {
-  addLine('[SYSTEM] Подключение к Twitch...');
-  this.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-  this.send('PASS justinfan12345');
-  this.send('NICK justinfan12345');
-  this.send('JOIN #andrusha_wav');
-};
+function connectToTwitchChat() {
+    try {
+        const client = new tmi.Client({
+            options: { debug: false },
+            connection: {
+                reconnect: true,
+                secure: true
+            },
+            channels: ['andrusha_wav']
+        });
 
-socket.onmessage = function(event) {
-  try {
-    const data = event.data;
+        client.connect().catch(error => {
+            console.error('Connection error:', error);
+            addChatMessage('System', 'Ошибка подключения к чату: ' + error.message);
+        });
 
-    // Обработка сообщений чата
-    if (data.includes('PRIVMSG')) {
-      const parts = data.split(';');
-      const userTag = parts.find(p => p.startsWith('display-name='));
-      const user = userTag ? cleanText(userTag.split('=')[1]) : 'Аноним';
-      const message = cleanText(data.split('PRIVMSG #andrusha_wav :')[1]);
+        client.on('message', (channel, tags, message, self) => {
+            // Игнорируем собственные сообщения и сообщения без имени пользователя
+            if (self || !tags['display-name']) return;
+            
+            // Добавляем сообщение в чат
+            addChatMessage(tags['display-name'], message);
+        });
 
-      addLine(`[CHAT] ${user}: ${message}`);
+        client.on('connected', (address, port) => {
+            console.log(`Connected to ${address}:${port}`);
+            addChatMessage('System', 'Чат Twitch подключен. Ожидание сообщений...');
+        });
+
+        client.on('disconnected', (reason) => {
+            console.log(`Disconnected: ${reason}`);
+            addChatMessage('System', `Отключено от чата: ${reason}`);
+        });
+
+    } catch (error) {
+        console.error('Error connecting to Twitch chat:', error);
+        addChatMessage('System', 'Ошибка подключения к Twitch чату: ' + error.message);
     }
-
-    // Ответ на PING
-    if (data.startsWith('PING')) {
-      this.send('PONG :tmi.twitch.tv');
-    }
-  } catch (e) {
-    console.error('Ошибка обработки сообщения:', e);
-  }
-};
-
-// Системные сообщения
-setInterval(function() {
-  const messages = [
-    "[SYSTEM] CPU: " + Math.floor(20 + Math.random() * 60) + "%",
-    "[SYSTEM] RAM: " + Math.floor(2 + Math.random() * 6) + "GB/" + Math.floor(8 + Math.random() * 8) + "GB",
-    "[SYSTEM] Антивирус: Активен",
-    "[SYSTEM] Сеть: Стабильная"
-  ];
-  addLine(messages[Math.floor(Math.random() * messages.length)]);
-}, 8000);
+}
