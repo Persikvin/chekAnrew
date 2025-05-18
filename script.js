@@ -99,15 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
     
-    socket.onerror = () => {
-      addLine('[SYSTEM] Ошибка Twitch, перехожу в оффлайн-режим');
-      startFakeChat();
-    };
-    
-  } catch (e) {
-    addLine('[SYSTEM] Ошибка: ' + e.message);
-    startFakeChat();
-
       // Делаем функцию доступной глобально
       window.addLine = function(text) {
           const terminalOutput = document.getElementById('terminalOutput');
