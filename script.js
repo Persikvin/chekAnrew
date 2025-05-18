@@ -14,9 +14,23 @@ function typeText(text, speed = 20, callback = null) {
     }, speed);
 }
 
-function addLine(text, speed = 20, callback = null) {
-    terminalOutput.innerHTML += '<br>';
-    typeText(text, speed, callback);
+function addLine(text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    terminalOutput.appendChild(line);
+    
+    // Три разных способа прокрутки (для максимальной совместимости)
+    terminalOutput.scrollTo({
+        top: terminalOutput.scrollHeight,
+        behavior: 'smooth'
+    });
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    line.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    
+    // Добавляем небольшой таймаут для гарантированной прокрутки
+    setTimeout(() => {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }, 100);
 }
 
 // Имитация загрузки системы

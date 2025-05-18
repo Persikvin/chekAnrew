@@ -2,12 +2,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const terminalOutput = document.getElementById('terminalOutput');
     
     // Функция для добавления текста с автоскроллом
-    function addLine(text) {
-        const line = document.createElement('div');
-        line.textContent = text;
-        terminalOutput.appendChild(line);
+function addLine(text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    terminalOutput.appendChild(line);
+    
+    // Три разных способа прокрутки (для максимальной совместимости)
+    terminalOutput.scrollTo({
+        top: terminalOutput.scrollHeight,
+        behavior: 'smooth'
+    });
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    line.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    
+    // Добавляем небольшой таймаут для гарантированной прокрутки
+    setTimeout(() => {
         terminalOutput.scrollTop = terminalOutput.scrollHeight;
-    }
+    }, 100);
+}
 
     // Системные сообщения
     const systemMessages = [
@@ -76,4 +88,17 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         addLine(systemMessages[0]);
     }, 1000);
+
+
+    // Принудительная прокрутка при загрузке
+setTimeout(() => {
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}, 500);
+
+// Периодическая проверка прокрутки (на всякий случай)
+setInterval(() => {
+    if (terminalOutput.scrollTop < terminalOutput.scrollHeight - 100) {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+}, 1000);
 });
