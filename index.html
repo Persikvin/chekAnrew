@@ -8,24 +8,27 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="tv-container">
-        <div class="tv-overlay"></div>
-        <div class="screen">
-            <div class="console-header">
-                <div class="logo">ANDRUSHA_WAV</div>
-                <div class="status">LIVE</div>
-            </div>
-            <div class="console-output" id="consoleOutput">
-                <div class="system-message">> Загрузка системы...</div>
-                <div class="system-message">> Подключение к Twitch API...</div>
-            </div>
-            <div class="chat-container" id="chatContainer">
-                <div class="chat-message">Чат Twitch появится здесь</div>
+    <div class="tv-frame">
+        <div class="tv-screen">
+            <div class="scanlines"></div>
+            <div class="screen-content">
+                <div class="console-header">
+                    <div class="logo">ANDRUSHA_WAV</div>
+                    <div class="status">LIVE</div>
+                </div>
+                <div class="console-output" id="consoleOutput">
+                    <div class="system-message">> Загрузка системы...</div>
+                    <div class="system-message">> Подключение к Twitch API...</div>
+                </div>
+                <div class="chat-container" id="chatContainer">
+                    <div class="chat-message">Чат Twitch появится здесь</div>
+                </div>
             </div>
         </div>
+        <div class="tv-bezel"></div>
         <div class="tv-controls">
-            <div class="knob"></div>
-            <div class="knob"></div>
+            <div class="knob power"></div>
+            <div class="knob channel"></div>
         </div>
     </div>
     <script src="script.js"></script>
