@@ -72,6 +72,24 @@ function startSystemMonitoring() {
   }, 5000 + Math.random() * 10000);
 }
 
+// Фейковый чат (если Twitch не подключится)
+function startFakeChat() {
+  const fakeUsers = ['Андрей', 'Подписчик', 'Модератор', 'Хейтер', 'Фанат'];
+  const fakeMessages = [
+    'Почему лагает звук?',
+    'Когда новый альбом?',
+    'LUL',
+    'Ты сегодня в ударе!',
+    'Выключи майнер 😆'
+  ];
+  
+  setInterval(() => {
+    const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
+    const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
+    addLine(`[CHAT] ${user}: ${msg}`);
+  }, 2000 + Math.random() * 5000);
+}
+
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   startSystemMonitoring();
