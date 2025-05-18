@@ -77,7 +77,6 @@ function startSystemMonitoring() {
     const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
     addLine(`[CHAT] ${user}: ${msg}`);
   }, 2000 + Math.random() * 5000);
-}
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
