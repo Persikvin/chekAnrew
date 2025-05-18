@@ -113,5 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (e) {
     addLine('[SYSTEM] Ошибка: ' + e.message);
     startFakeChat();
+
+      // Делаем функцию доступной глобально
+      window.addLine = function(text) {
+          const terminalOutput = document.getElementById('terminalOutput');
+          const line = document.createElement('div');
+          line.textContent = text;
+          terminalOutput.appendChild(line);
+          terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
   }
 });
