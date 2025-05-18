@@ -40,4 +40,4 @@ client.on('message', (channel, tags, message) => {
 // Системные сообщения
 setInterval(() => {
     addLine(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
-}, 10000);
+}, 1000);
