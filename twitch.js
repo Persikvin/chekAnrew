@@ -1,58 +1,56 @@
-// Фейковые системные статусы (оставляем без изменений)
-function updateSystemStats() {
-    // ... (прежний код)
-}
+// Подключение к Twitch IRC через WebSocket (без OAuth)
+document.addEventListener('DOMContentLoaded', () => {
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.innerHTML = '<div class="chat-message">Подключение к IRC Twitch...</div>';
 
-// Подключение к IRC WebSocket Twitch
-function connectToTwitchChat() {
-    const channel = 'andrusha_wav';
-    const nick = 'justinfan' + Math.floor(Math.random() * 10000);
-    
-    const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-    
-    ws.onopen = () => {
-        addChatMessage('System', 'Подключаемся к Twitch IRC...');
-        ws.send(`NICK ${nick}`);
-        ws.send(`JOIN #${channel}`);
+    // WebSocket подключение к Twitch IRC (анонимно)
+    const socket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+
+    socket.onopen = () => {
+        // Анонимное подключение (без логина)
+        socket.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+        socket.send('NICK justinfan12345'); // Анонимный ник (фиксированный)
+        socket.send('JOIN #andrusha_wav'); // Подключаемся к чату стримера
+        addChatMessage('Система', 'Подключено к IRC Twitch', true);
     };
-    
-    ws.onmessage = (event) => {
+
+    socket.onmessage = (event) => {
         const message = event.data.trim();
-        
-        // Ping-Pong для поддержания соединения
+
+        // Игнорируем PING-запросы (отвечаем PONG)
         if (message.startsWith('PING')) {
-            ws.send('PONG :tmi.twitch.tv');
+            socket.send('PONG :tmi.twitch.tv');
             return;
         }
-        
-        // Парсинг сообщений чата
-        const chatMsg = message.match(/^:([^!]+)!.*PRIVMSG #\w+ :(.+)$/);
-        if (chatMsg) {
-            const username = chatMsg[1];
-            const text = chatMsg[2];
-            addChatMessage(username, text);
-        }
-        
-        // Системные сообщения
-        if (message.includes('Login authentication failed')) {
-            addChatMessage('System', 'Ошибка: Анонимное подключение ограничено');
+
+        // Парсим сообщения из чата (формат: `user!user@user.tmi.twitch.tv PRIVMSG #channel :text`)
+        if (message.includes('PRIVMSG')) {
+            const parts = message.split(' ');
+            const user = parts[0].split('!')[0].slice(1); // Извлекаем имя пользователя
+            const text = message.split(':').slice(2).join(':').trim(); // Извлекаем текст сообщения
+            addChatMessage(user, text);
         }
     };
-    
-    ws.onerror = (error) => {
-        addChatMessage('System', `Ошибка соединения: ${error.message}`);
-    };
-    
-    ws.onclose = () => {
-        addChatMessage('System', 'Соединение с чатом закрыто');
-    };
-}
 
-// Инициализация
-function init() {
-    setInterval(updateSystemStats, 1000);
-    updateSystemStats();
-    connectToTwitchChat();
-}
+    socket.onerror = (error) => {
+        addChatMessage('Система', `Ошибка: ${error.message || 'Неизвестная ошибка'}`, true);
+    };
 
-window.onload = init;
+    socket.onclose = () => {
+        addChatMessage('Система', 'Отключено от IRC', true);
+    };
+
+    function addChatMessage(user, message, isSystem = false) {
+        const messageElement = document.createElement('div');
+        messageElement.className = 'chat-message';
+        
+        if (isSystem) {
+            messageElement.innerHTML = `<span style="color: #0f0">${user}: ${message}</span>`;
+        } else {
+            messageElement.innerHTML = `<span style="color: #ff0">${user}:</span> ${message}`;
+        }
+        
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+});

@@ -3,65 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andrusha_WAV - System Monitor</title>
+    <title>Andrusha_WAV - TV Console</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="tv-overlay">
-        <div class="scanlines"></div>
-        <div class="noise"></div>
-    </div>
-    
     <div class="tv-container">
-        <div class="console-header">
-            <h1>SYSTEM MONITOR v1.3.7</h1>
-            <h2>Streamer: Andrusha_WAV</h2>
-            <div class="status-line">
-                <span class="status-label">STATUS:</span>
-                <span class="status-value" id="stream-status">LIVE</span>
-                <span class="uptime" id="uptime">UPTIME: 02:45:17</span>
+        <div class="tv-overlay"></div>
+        <div class="screen">
+            <div class="console-header">
+                <div class="logo">ANDRUSHA_WAV</div>
+                <div class="status">LIVE</div>
+            </div>
+            <div class="console-output" id="consoleOutput">
+                <div class="system-message">> Загрузка системы...</div>
+                <div class="system-message">> Подключение к Twitch API...</div>
+            </div>
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-message">Чат Twitch появится здесь</div>
             </div>
         </div>
-        
-        <div class="console-body">
-            <div class="system-stats">
-                <div class="stats-column">
-                    <div class="stat-item">
-                        <span class="stat-label">CPU:</span>
-                        <span class="stat-value" id="cpu-usage">47%</span>
-                        <div class="stat-bar"><div class="stat-bar-fill" id="cpu-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">GPU:</span>
-                        <span class="stat-value" id="gpu-usage">62%</span>
-                        <div class="stat-bar"><div class="stat-bar-fill" id="gpu-bar"></div></div>
-                    </div>
-                </div>
-                <div class="stats-column">
-                    <div class="stat-item">
-                        <span class="stat-label">RAM:</span>
-                        <span class="stat-value" id="ram-usage">12.3/16GB</span>
-                        <div class="stat-bar"><div class="stat-bar-fill" id="ram-bar"></div></div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">NET:</span>
-                        <span class="stat-value" id="net-usage">4.2 Mbps</span>
-                        <div class="stat-bar"><div class="stat-bar-fill" id="net-bar"></div></div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="chat-container">
-                <div class="chat-header">TWITCH CHAT</div>
-                <div class="chat-messages" id="chat-messages"></div>
-            </div>
-        </div>
-        
-        <div class="console-footer">
-            <div class="fps-counter">FPS: <span id="fps">60</span></div>
-            <div class="timestamp" id="timestamp">2025-11-15 19:45:23</div>
+        <div class="tv-controls">
+            <div class="knob"></div>
+            <div class="knob"></div>
         </div>
     </div>
     <script src="script.js"></script>
+    <script src="twitch.js"></script>
 </body>
 </html>
