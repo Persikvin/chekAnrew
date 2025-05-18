@@ -49,6 +49,7 @@ setInterval(() => {
     addSystemMessage(`[INFO] Зрителей: ${viewers} | Подписчиков: 3192`);
     addSystemMessage(`[WARN] Возможны Майнеры`);
     addSystemMessage(`[CRIT] ИГНОР PERSIKVIN`);
+    addSystemMessage(`[ERROR] КОМПЬЮТЕР ЗАХВАЧЕН БАРБИ`);
 }, 10000);
 
 // Случайные системные уведомления
