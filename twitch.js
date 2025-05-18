@@ -45,7 +45,7 @@ try {
     // Системные сообщения
     setInterval(() => {
         addLine(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
-    }, 8000);
+    }, 60);
 
 } catch (e) {
     addLine('[SYSTEM] Критическая ошибка: ' + e.message);
