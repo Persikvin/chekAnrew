@@ -1,5 +1,3 @@
-// WebSocket подключение
-const socket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
 socket.onopen = function() {
   addLine('[SYSTEM] Подключение к Twitch...');
@@ -42,8 +40,3 @@ setInterval(function() {
   ];
   addLine(messages[Math.floor(Math.random() * messages.length)]);
 }, 8000);
-
-socket.onerror = function(error) {
-  addLine('[ОШИБКА] Проблемы с соединением');
-  console.error('WebSocket error:', error);
-}
