@@ -1,26 +1,49 @@
+// WebSocket подключение
 const socket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
 
-socket.onopen = () => {
-  socket.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-  socket.send('PASS justinfan12345'); // Анонимный пароль
-  socket.send('NICK justinfan12345'); // Анонимный ник
-  socket.send('JOIN #andrusha_wav');  // Подключаемся к каналу
-  addLine('[SYSTEM] Подключение к чату...');
+socket.onopen = function() {
+  addLine('[SYSTEM] Подключение к Twitch...');
+  this.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+  this.send('PASS justinfan12345');
+  this.send('NICK justinfan12345');
+  this.send('JOIN #andrusha_wav');
 };
 
-socket.onmessage = (event) => {
-  if (event.data.includes('PRIVMSG')) {
-    const parts = event.data.split(';');
-    const user = parts.find(p => p.startsWith('display-name='))?.split('=')[1] || 'Аноним';
-    const message = event.data.split('PRIVMSG #andrusha_wav :')[1];
-    addLine(`[CHAT] ${user}: ${message}`);
-  }
-  // Ответ на PING (обязательно)
-  if (event.data.startsWith('PING')) {
-    socket.send('PONG :tmi.twitch.tv');
+socket.onmessage = function(event) {
+  try {
+    const data = event.data;
+
+    // Обработка сообщений чата
+    if (data.includes('PRIVMSG')) {
+      const parts = data.split(';');
+      const userTag = parts.find(p => p.startsWith('display-name='));
+      const user = userTag ? cleanText(userTag.split('=')[1]) : 'Аноним';
+      const message = cleanText(data.split('PRIVMSG #andrusha_wav :')[1]);
+
+      addLine(`[CHAT] ${user}: ${message}`);
+    }
+
+    // Ответ на PING
+    if (data.startsWith('PING')) {
+      this.send('PONG :tmi.twitch.tv');
+    }
+  } catch (e) {
+    console.error('Ошибка обработки сообщения:', e);
   }
 };
 
-socket.onerror = (error) => {
-  addLine('[SYSTEM] Ошибка соединения: ' + error.message);
-};
+// Системные сообщения
+setInterval(function() {
+  const messages = [
+    "[SYSTEM] CPU: " + Math.floor(20 + Math.random() * 60) + "%",
+    "[SYSTEM] RAM: " + Math.floor(2 + Math.random() * 6) + "GB/" + Math.floor(8 + Math.random() * 8) + "GB",
+    "[SYSTEM] Антивирус: Активен",
+    "[SYSTEM] Сеть: Стабильная"
+  ];
+  addLine(messages[Math.floor(Math.random() * messages.length)]);
+}, 8000);
+
+socket.onerror = function(error) {
+  addLine('[ОШИБКА] Проблемы с соединением');
+  console.error('WebSocket error:', error);
+}

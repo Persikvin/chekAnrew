@@ -6,7 +6,7 @@ body {
 }
 
 .terminal {
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Courier New', 'Lucida Console', monospace;
     position: relative;
     width: 100vw;
     height: 100vh;
@@ -16,6 +16,9 @@ body {
     box-sizing: border-box;
     overflow: hidden;
     text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: pre;
 }
 
 .scanlines {
@@ -50,6 +53,10 @@ body {
     z-index: 2;
     height: calc(100% - 40px);
     overflow-y: auto;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    unicode-bidi: plaintext;
+    font-feature-settings: "calt" 0;
 }
 
 .header {

@@ -115,6 +115,42 @@ document.addEventListener('DOMContentLoaded', () => {
           line.textContent = text;
           terminalOutput.appendChild(line);
           terminalOutput.scrollTop = terminalOutput.scrollHeight;
+          // Глобальная функция для вывода текста
+          window.addLine = function(text) {
+              const terminal = document.getElementById('terminalOutput');
+              const line = document.createElement('div');
+
+              // Очистка текста перед выводом
+              line.textContent = cleanText(text);
+              terminal.appendChild(line);
+
+              // Автопрокрутка
+              terminal.scrollTop = terminal.scrollHeight;
+          };
+
+// Функция очистки текста
+          function cleanText(text) {
+              return String(text)
+                  .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Удаляем управляющие символы
+                  .replace(/[^\w\u0400-\u04FF\s.,!?@#$%^&*()\-+=:;'"<>{}[\]|\\\/]/gu, '') // Разрешаем только безопасные символы
+                  .replace(/\s+/g, ' ') // Убираем лишние пробелы
+                  .trim()
+                  .slice(0, 300); // Ограничение длины
+          }
+
+// Инициализация
+          document.addEventListener('DOMContentLoaded', function() {
+              addLine('> Система инициализирована');
+
+              function cleanText(text) {
+                  return String(text)
+                      .normalize('NFKC') // Нормализация Unicode
+                      .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Удаляем управляющие символы
+                      .replace(/[^\w\u0400-\u04FF\s.,!?\-+=:;'"@#$%^&*()]/gu, '') // Безопасные символы
+                      .replace(/\s+/g, ' ')
+                      .trim();
+              }
+          });
       }
   }
 });
