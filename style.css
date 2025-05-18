@@ -81,8 +81,3 @@ body {
 .terminal-content::-webkit-scrollbar {
     display: none;
 }
-
-.terminal-content {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}

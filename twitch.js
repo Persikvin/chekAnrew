@@ -1,12 +1,11 @@
 const terminalOutput = document.getElementById('terminalOutput');
 
+// Системные сообщения
 const systemMessages = [
-    "SYSTEM: Найден майнер! Процесс убит (PID: " + Math.floor(Math.random()*9000+1000) + ")",
+    "SYSTEM: Обнаружен майнер! PID: " + Math.floor(Math.random()*9000+1000),
     "SYSTEM: Статус донатов: " + (Math.random() > 0.5 ? "TRUE" : "FALSE"),
-    "MEMORY: Allocation: " + Math.floor(Math.random()*3000+1000) + "MB/" + Math.floor(Math.random()*8000+4000) + "MB",
-    "CPU: Load: " + Math.floor(Math.random()*100) + "%",
-    "NETWORK: Packet loss: " + Math.floor(Math.random()*5) + "%",
-    "SYSTEM: Integrity check... " + (Math.random() > 0.3 ? "PASSED" : "FAILED")
+    "MEMORY: " + Math.floor(Math.random()*3000+1000) + "MB/" + Math.floor(Math.random()*8000+4000) + "MB",
+    "CPU: " + Math.floor(Math.random()*100) + "% load"
 ];
 
 function addLine(text) {
@@ -16,28 +15,38 @@ function addLine(text) {
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
-// Twitch чат
-const client = new tmi.Client({
-    channels: ['andrusha_wav'],
-    connection: {
-        reconnect: true,
-        secure: true
-    }
-});
+// Twitch Chat
+try {
+    const client = new tmi.Client({
+        channels: ['andrusha_wav'],
+        connection: {
+            reconnect: true,
+            secure: true
+        },
+        options: {
+            debug: false
+        }
+    });
 
-client.connect().catch(err => {
-    addLine('[TWITCH] Connection error: ' + err);
-});
+    client.connect().then(() => {
+        addLine('[TWITCH] Подключение успешно');
+    }).catch(err => {
+        addLine('[TWITCH] Ошибка подключения: ' + err.message);
+    });
 
-client.on('connected', () => {
-    addLine('[TWITCH] Connected to chat');
-});
+    client.on('message', (channel, tags, message) => {
+        addLine(`[CHAT] ${tags['display-name']}: ${message}`);
+    });
 
-client.on('message', (channel, tags, message) => {
-    addLine(`[CHAT] ${tags['display-name']}: ${message}`);
-});
+    client.on('connected', () => {
+        addLine('[TWITCH] Соединение установлено');
+    });
 
-// Системные сообщения
-setInterval(() => {
-    addLine(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
-}, 1000);
+    // Системные сообщения
+    setInterval(() => {
+        addLine(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
+    }, 8000);
+
+} catch (e) {
+    addLine('[SYSTEM] Критическая ошибка: ' + e.message);
+}
