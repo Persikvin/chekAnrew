@@ -46,7 +46,7 @@ setInterval(() => {
     
     addSystemMessage(`> Статус CPU: ${cpu}% | GPU: ${gpu}% | RAM: ${ram}/16GB`);
     addSystemMessage(`> FPS: ${fps} | Bitrate: ${bitrate} Kbps`);
-    addSystemMessage(`> Зрителей: ${viewers} | Подписчиков: 342`);
+    addSystemMessage(`> Зрителей: ${viewers} | Подписчиков: 3192`);
 }, 10000);
 
 // Случайные системные уведомления
