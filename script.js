@@ -1,18 +1,18 @@
 // Системные сообщения и статусы
 const systemMessages = [
-    "> Проверка оборудования... OK",
-    "> Загрузка драйверов... OK",
-    "> Инициализация сети... OK",
-    "> Проверка подключения к Twitch... OK",
-    "> Загрузка OBS... OK",
-    "> Проверка микрофона... OK",
-    "> Проверка камеры... OK",
-    "> Загрузка игрового клиента... OK",
-    "> Система готова к стриму",
-    "> Статус CPU: 45% | GPU: 62% | RAM: 7.2/16GB",
-    "> FPS: 58-62 | Bitrate: 4500 Kbps",
-    "> Зрителей: 127 | Подписчиков: 342",
-    "> Последний донат: 100 руб от User123"
+    "[INFO] Проверка оборудования... OK",
+    "[INFO] Загрузка драйверов... OK",
+    "[INFO] Инициализация сети... OK",
+    "[INFO] Проверка подключения к Twitch... OK",
+    "[INFO] Загрузка OBS... OK",
+    "[INFO] Проверка микрофона... OK",
+    "[INFO] Проверка камеры... OK",
+    "[INFO] Загрузка игрового клиента... OK",
+    "[INFO] Система готова к стриму",
+    "[INFO] Статус CPU: 45% | GPU: 62% | RAM: 7.2/16GB",
+    "[INFO] FPS: 58-62 | Bitrate: 4500 Kbps",
+    "[INFO] Зрителей: 127 | Подписчиков: 342",
+    "[INFO] Последний донат: 100 руб от br3vil"
 ];
 
 const consoleOutput = document.getElementById('consoleOutput');
@@ -44,18 +44,21 @@ setInterval(() => {
     const bitrate = Math.floor(Math.random() * 500) + 4000;
     const viewers = Math.floor(Math.random() * 50) + 100;
     
-    addSystemMessage(`> Статус CPU: ${cpu}% | GPU: ${gpu}% | RAM: ${ram}/16GB`);
-    addSystemMessage(`> FPS: ${fps} | Bitrate: ${bitrate} Kbps`);
-    addSystemMessage(`> Зрителей: ${viewers} | Подписчиков: 3192`);
+    addSystemMessage(`[INFO] Статус CPU: ${cpu}% | GPU: ${gpu}% | RAM: ${ram}/32GB`);
+    addSystemMessage(`[INFO] FPS: ${fps} | Bitrate: ${bitrate} Kbps`);
+    addSystemMessage(`[INFO] Зрителей: ${viewers} | Подписчиков: 3192`);
+    addSystemMessage(`[WARN] Возможны Майнеры`);
+    addSystemMessage(`[CRIT] ИГНОР PERSIKVIN`);
 }, 10000);
 
 // Случайные системные уведомления
 const randomNotifications = [
-    "> Новый подписчик: User_ABC",
-    "> Донат: 50 руб от ViewerXYZ",
-    "> Система: Проверка соединения... OK",
-    "> OBS: Буфер потока стабилен",
-    "> Чат: Активность высокая"
+    "[INFO] Новый подписчик: User_ABC",
+    "[INFO] Донат: 50 руб от br3vil",
+    "[INFO] Система: Проверка соединения... OK",
+    "[INFO] OBS: Буфер потока стабилен",
+    "[INFO] Чат: Активность высокая"
+    "[WARN] Барби захватила компьютер"
 ];
 
 setInterval(() => {
