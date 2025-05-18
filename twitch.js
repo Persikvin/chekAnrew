@@ -41,14 +41,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Фейковый чат для оффлайн-режима
-    const fakeChatInterval = setInterval(() => {
-            const fakeUsers = ['Persikvin', 'br3vil', 'Oriy McAron', 'DasNuk'];
-            const fakeMessages = [
-                'Опять игнорит((((',
-                'КАЗУАЛ',
-                'СРОЧНИК',
-                'Когда новый видос???',
-                'Крутой стрим!'
+    function startFakeChat() {
+        const fakeUsers = ['Viewer_1', 'Fan_123', 'Anonymous', 'Subscriber'];
+        const fakeMessages = [
+            'Привет! Как дела?',
+            'Крутой стрим!',
+            'LUL',
+            'Когда новая музыка?',
+            'Покажи гитару'
+        ];
         
         setInterval(() => {
             const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
