@@ -1,71 +1,104 @@
 document.addEventListener('DOMContentLoaded', function() {
     const terminalOutput = document.getElementById('terminalOutput');
     
-    function addLine(text) {
-        const line = document.createElement('div');
-        line.textContent = text;
-        terminalOutput.appendChild(line);
+    // Функция для добавления текста с автоскроллом
+function addLine(text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    terminalOutput.appendChild(line);
+    
+    // Три разных способа прокрутки (для максимальной совместимости)
+    terminalOutput.scrollTo({
+        top: terminalOutput.scrollHeight,
+        behavior: 'smooth'
+    });
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    line.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    
+    // Добавляем небольшой таймаут для гарантированной прокрутки
+    setTimeout(() => {
         terminalOutput.scrollTop = terminalOutput.scrollHeight;
-    }
+    }, 100);
+}
 
-    // Проверяем загрузилась ли библиотека
-    if (typeof tmi === 'undefined') {
-        addLine('[SYSTEM] Ошибка: Библиотека чата не загружена');
-        addLine('[SYSTEM] Включен оффлайн-режим');
-        startFakeChat();
-        return;
-    }
+    // Системные сообщения
+    const systemMessages = [
+        "SYSTEM: Обнаружен майнер! PID: " + Math.floor(Math.random()*9000+1000),
+        "SYSTEM: Статус донатов: " + (Math.random() > 0.5 ? "TRUE" : "FALSE"),
+        "MEMORY: " + Math.floor(Math.random()*3000+1000) + "MB/" + Math.floor(Math.random()*8000+4000) + "MB",
+        "CPU: " + Math.floor(Math.random()*100) + "% load",
+        "NETWORK: Пинг " + Math.floor(Math.random()*50+10) + "мс"
+    ];
 
-    // Реальный чат Twitch
+    // Запускаем системные сообщения
+    const systemInterval = setInterval(() => {
+        addLine(systemMessages[Math.floor(Math.random()*systemMessages.length)]);
+    }, 8000);
+
+    // Twitch Chat
     try {
         const client = new tmi.Client({
             channels: ['andrusha_wav'],
             connection: {
                 reconnect: true,
                 secure: true
+            },
+            options: {
+                debug: true // Включите для отладки
             }
         });
 
         client.connect().catch(err => {
-            addLine('[TWITCH] Ошибка подключения: ' + err.message);
-            startFakeChat();
+            addLine('[TWITCH] Ошибка подключения: ' + err);
         });
 
         client.on('message', (channel, tags, message) => {
             addLine(`[CHAT] ${tags['display-name']}: ${message}`);
         });
 
-    } catch (e) {
-        addLine('[SYSTEM] Ошибка инициализации чата: ' + e.message);
-        startFakeChat();
-    }
+        client.on('connected', (addr, port) => {
+            addLine(`[TWITCH] Подключено к ${addr}:${port}`);
+        });
 
-    // Фейковый чат для оффлайн-режима
-    function startFakeChat() {
-        const fakeUsers = ['Viewer_1', 'Fan_123', 'Anonymous', 'Subscriber'];
-        const fakeMessages = [
-            'Привет! Как дела?',
-            'Крутой стрим!',
-            'LUL',
-            'Когда новая музыка?',
-            'Покажи гитару'
-        ];
+        client.on('disconnected', (reason) => {
+            addLine('[TWITCH] Отключено: ' + reason);
+        });
+
+    } catch (e) {
+        addLine('[SYSTEM] Ошибка: ' + e.message);
+        addLine('[SYSTEM] Используется оффлайн-режим');
         
-        setInterval(() => {
-            const user = fakeUsers[Math.floor(Math.random() * fakeUsers.length)];
-            const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
+        // Фейковые сообщения чата, если Twitch недоступен
+        const fakeChatInterval = setInterval(() => {
+            const fakeUsers = ['Persikvin', 'br3vil', 'Oriy McAron', 'DasNuk'];
+            const fakeMessages = [
+                'Опять игнорит((((',
+                'КАЗУАЛ',
+                'СРОЧНИК',
+                'Когда новый видос???',
+                'Крутой стрим!'
+            ];
+            const user = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
+            const msg = fakeMessages[Math.floor(Math.random()*fakeMessages.length)];
             addLine(`[CHAT] ${user}: ${msg}`);
         }, 3000);
-
-        // Системные сообщения
-        const systemMessages = [
-            "SYSTEM: Статус донатов: " + (Math.random() > 0.5 ? "TRUE" : "FALSE"),
-            "SYSTEM: CPU: " + Math.floor(Math.random() * 100) + "%",
-            "SYSTEM: Обнаружен майнер (PID: " + Math.floor(Math.random() * 9000 + 1000) + ")"
-        ];
-        
-        setInterval(() => {
-            addLine(systemMessages[Math.floor(Math.random() * systemMessages.length)]);
-        }, 8000);
     }
+
+    // Первое системное сообщение после загрузки
+    setTimeout(() => {
+        addLine(systemMessages[0]);
+    }, 1000);
+
+
+    // Принудительная прокрутка при загрузке
+setTimeout(() => {
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}, 500);
+
+// Периодическая проверка прокрутки (на всякий случай)
+setInterval(() => {
+    if (terminalOutput.scrollTop < terminalOutput.scrollHeight - 100) {
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+}, 1000);
 });
